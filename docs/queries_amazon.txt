@@ -1,0 +1,159 @@
+/**FArmer **/
+CREATE TABLE `amazonfresh`.`farmerdetails` (
+  `farmerid` INT NOT NULL,
+  `firstname` VARCHAR(45) NOT NULL,
+  `lastname` VARCHAR(45) NOT NULL,
+  `address` VARCHAR(45) NOT NULL,
+  `city` VARCHAR(45) NOT NULL,
+  `state` VARCHAR(45) NOT NULL,
+  `zipcode` VARCHAR(45) NOT NULL,
+  `phonenumber` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`farmerid`),
+  UNIQUE INDEX `farmerid_UNIQUE` (`farmerid` ASC));
+
+/**Products**/
+CREATE TABLE `amazonfresh`.`productdetails` (
+  `productid` INT(10) NOT NULL AUTO_INCREMENT,
+  `farmerid` VARCHAR(11) NOT NULL,
+  `productname` VARCHAR(45) NOT NULL,
+  `productprice` VARCHAR(45) NOT NULL,
+  `description` VARCHAR(300) NULL,
+  PRIMARY KEY (`productid`),
+  UNIQUE INDEX `productid_UNIQUE` (`productid` ASC),
+  INDEX `farmerid_idx` (`farmerid` ASC),
+  CONSTRAINT `farmerid`
+    FOREIGN KEY (`farmerid`)
+    REFERENCES `amazonfresh`.`farmerdetails` (`farmerid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+/** Customer **/
+CREATE TABLE `amazonfresh`.`customerdetails` (
+  `customerid` VARCHAR(11) NOT NULL,
+  `firstname` VARCHAR(45) NOT NULL,
+  `lastname` VARCHAR(45) NOT NULL,
+  `address` VARCHAR(45) NOT NULL,
+  `city` VARCHAR(45) NOT NULL,
+  `state` VARCHAR(45) NOT NULL,
+  `zipcode` VARCHAR(10) NOT NULL,
+  `phonenumber` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(45) NOT NULL,
+  `ccnumber` VARCHAR(16) NOT NULL,
+  `password` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`customerid`),
+  UNIQUE INDEX `customerid_UNIQUE` (`customerid` ASC));
+
+
+/** bill details**/
+  CREATE TABLE `amazonfresh`.`billdetails` (
+  `billid` INT(11) NOT NULL,
+  `billdate` DATETIME NOT NULL,
+  `deliverydate` DATETIME NOT NULL,
+  `total` DECIMAL(10) NOT NULL,
+  `customerid` VARCHAR(11) NOT NULL,
+  PRIMARY KEY (`billid`),
+  UNIQUE INDEX `billid_UNIQUE` (`billid` ASC),
+  INDEX `customerid_idx` (`customerid` ASC),
+  CONSTRAINT `customerid`
+    FOREIGN KEY (`customerid`)
+    REFERENCES `amazonfresh`.`customerdetails` (`customerid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+/** order details**/
+CREATE TABLE `amazonfresh`.`orderdetails` (
+  `id` INT(10) NOT NULL AUTO_INCREMENT,
+  `billid` INT(11) NOT NULL,
+  `productid` INT(10) NOT NULL,
+  `productquantity` INT(10) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  INDEX `billid_idx` (`billid` ASC),
+  INDEX `productid_idx` (`productid` ASC),
+  CONSTRAINT `billid`
+    FOREIGN KEY (`billid`)
+    REFERENCES `amazonfresh`.`billdetails` (`billid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `productid`
+    FOREIGN KEY (`productid`)
+    REFERENCES `amazonfresh`.`productdetails` (`productid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+/** Admin**/
+CREATE TABLE `amazonfresh`.`admindetails` (
+  `adminid` INT(11) NOT NULL,
+  `firstname` VARCHAR(45) NOT NULL,
+  `lastname` VARCHAR(45) NOT NULL,
+  `address` VARCHAR(45) NOT NULL,
+  `city` VARCHAR(45) NOT NULL,
+  `state` VARCHAR(45) NOT NULL,
+  `zipcode` VARCHAR(45) NOT NULL,
+  `phonenumber` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`adminid`),
+  UNIQUE INDEX `adminid_UNIQUE` (`adminid` ASC));
+
+/** driver **/
+CREATE TABLE `amazonfresh`.`driverdetails` (
+  `driverid` INT(11) NOT NULL,
+  `firstname` VARCHAR(45) NOT NULL,
+  `lastname` VARCHAR(45) NOT NULL,
+  `address` VARCHAR(45) NOT NULL,
+  `city` VARCHAR(45) NOT NULL,
+  `state` VARCHAR(45) NOT NULL,
+  `zipcode` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(45) NOT NULL,
+  `phonenumber` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`driverid`),
+  UNIQUE INDEX `driverid_UNIQUE` (`driverid` ASC));
+
+
+/** truck details**/
+CREATE TABLE `amazonfresh`.`truckdetails` (
+  `truckid` INT(10) NOT NULL,
+  `truckinfo` VARCHAR(45) NOT NULL,
+  `driverid` INT(11) NULL,
+  PRIMARY KEY (`truckid`),
+  UNIQUE INDEX `truckid_UNIQUE` (`truckid` ASC),
+  INDEX `driverid_idx` (`driverid` ASC),
+  CONSTRAINT `driverid`
+    FOREIGN KEY (`driverid`)
+    REFERENCES `amazonfresh`.`driverdetails` (`driverid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+/** Trips**/
+CREATE TABLE `amazonfresh`.`tripdetails` (
+  `tripid` INT(11) NOT NULL,
+  `pickuploc` VARCHAR(45) NOT NULL,
+  `dropoffloc` VARCHAR(45) NOT NULL,
+  `dropoffdatetime` DATETIME NOT NULL,
+  `customerid` VARCHAR(11) NOT NULL,
+  `driverid` INT(11) NOT NULL,
+  `truckid` INT(11) NOT NULL,
+  PRIMARY KEY (`tripid`),
+  UNIQUE INDEX `tripid_UNIQUE` (`tripid` ASC),
+  INDEX `driverid_idx` (`driverid` ASC),
+  INDEX `truckid_idx` (`truckid` ASC),
+  INDEX `customerid_idx` (`customerid` ASC),
+  CONSTRAINT `driverid`
+    FOREIGN KEY (`driverid`)
+    REFERENCES `amazonfresh`.`driverdetails` (`driverid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `truckid`
+    FOREIGN KEY (`truckid`)
+    REFERENCES `amazonfresh`.`truckdetails` (`truckid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `customerid`
+    FOREIGN KEY (`customerid`)
+    REFERENCES `amazonfresh`.`customerdetails` (`customerid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
